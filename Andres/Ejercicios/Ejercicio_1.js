@@ -1,3 +1,0 @@
-/*
-    Andres Brieva
-*/
