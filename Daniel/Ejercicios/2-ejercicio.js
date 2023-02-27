@@ -17,12 +17,12 @@ let salesOrders = [
     }
   ];
 
-sum_sales_orders(salesOrders);
+console.log("Ouput: " + sum_sales_orders(salesOrders));
 
 function sum_sales_orders(salesOrders){
     let total = 0;
     for(let i = 0; i < salesOrders.length; i++){
         total += salesOrders[i].total;
     }
-    console.log("Ouput: " + total);
+    return total;
 }
