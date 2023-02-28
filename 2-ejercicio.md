@@ -18,6 +18,8 @@ E) Cada vez que se inicie una linea de articulo el número 2 debe estar por defa
 Fecha de Entrega:
 
 Semillero NetSuite: 01 de Marzo/ 7:00 pm
+
+
 Api Center: 03 de Marzo/ 7:00 pm
 
 
