@@ -49,7 +49,7 @@ define(['N/search', 'N/ui/dialog', 'N/email'],
                         log.debug('inicio el Fielchange','Si')                    
                         const country = obj.getValue('custentity28')
                         let fieldCountry = search.lookupFields({
-                            type: 'customrecord920',
+                            type: 'customrecord_s4_cns_country',
                             id: country,
                             columns: ['custrecord1406','custrecord1407']
                         })
