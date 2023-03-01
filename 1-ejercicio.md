@@ -14,10 +14,10 @@ customerName: string
 total: number
 delivered: boolean
 
-Tu reto es retornar la suma total de todas las órdenes de compra, para solucionarlo crea una función que recibe un parámetro de entrada:
+Tu reto es retornar la suma total de todas las órdenes de compra, para solucionarlo crea una función que recibe un parámetro de entraa:d
 
-orders: Un array con las órdenes de compra
-
+orders: Un array cones de compra
+ las órden
 <code>
 Input:
 [
