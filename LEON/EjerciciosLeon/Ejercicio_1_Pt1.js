@@ -14,7 +14,7 @@ function numberOfCharacters(arrayNumbers) {
         if (result[arrayNumbers[i]]) { //¿Existe la propiedad del objeto result?
             result[arrayNumbers[i]]++; //Sí existe, le sumamos 1
         }
-        else { //No existe. La creamos con valor 1
+        else { //No existe. La creamos con valor 1.
             result[arrayNumbers[i]] = 1;
         }
     }
