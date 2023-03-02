@@ -4,10 +4,17 @@
  *fecha: 01/03/2023
  *@NApiVersion 2.1
  *@NScriptType ClientScript
+ *@puntación 70
  */
 
 define(['N/ui/message', 'N/ui/dialog'], function (message, dialog) {
 
+
+    /**
+     * @calificacion  20
+     * @retro Buen Ejercicio, resulto de una manera simple
+     * @consejo no era necesario el alert"
+     */
     function pageInit(context) {
         try {
             const obj = context.currentRecord;
@@ -25,6 +32,10 @@ define(['N/ui/message', 'N/ui/dialog'], function (message, dialog) {
         }
     }
 
+    /**
+     * @calificacion  20
+     * @retro Buen Ejercicio, resulto de una manera simple
+     */
     function saveRecord(context) {
 
         try {
@@ -52,7 +63,10 @@ define(['N/ui/message', 'N/ui/dialog'], function (message, dialog) {
 
 
 
-
+     /**
+     * @calificacion  20
+     * @retro Buen Ejercicio, resulto de una manera simple
+     */
     function validateField(context) {
 
         const obj = context.currentRecord;
@@ -81,7 +95,11 @@ define(['N/ui/message', 'N/ui/dialog'], function (message, dialog) {
     }
 
 
-
+    /**
+     * @calificacion  10
+     * @retro no cumple totalmente lo que se pide, el metodo usado no funciona para pegar valores en Sublistas
+     * @consejo Todas las variables deben estar escritas en ingles
+     */
     function sublistChanged(context) {
         try {
             let obj = context.currentRecord;

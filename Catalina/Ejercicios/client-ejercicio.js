@@ -2,9 +2,16 @@
  *@NApiVersion 2.1
  *@NScriptType ClientScript
  *@author Catalina R
+ *@Puntuacion 78
  *fecha 28/02/2023
  */
 define(['N/search', 'N/ui/dialog', "N/currentRecord"], function (search, dialog, currentRecord) {
+
+    /**
+     * @calificacion  20
+     * @retro Buen Ejercicio, resulto de una manera simple
+     * @consejo no era necesario el else, recuerda "Codigo chico codigo Bonito"
+     */
     function pageInit(context) {
         const currentRecord = context.currentRecord
         if (context.mode === "create") {
@@ -19,6 +26,11 @@ define(['N/search', 'N/ui/dialog', "N/currentRecord"], function (search, dialog,
         }
     }
 
+    /**
+     * @calificacion  20
+     * @retro Buen Ejercicio, resulto de una manera simple
+     * @consejo no era necesario el else, recuerda "Codigo chico codigo Bonito"
+     */
     function saveRecord(context) {
         try {
             const currentRecord = context.currentRecord
@@ -44,6 +56,12 @@ define(['N/search', 'N/ui/dialog', "N/currentRecord"], function (search, dialog,
             log.error(error)
         }
     }
+
+
+    /**
+     * @calificacion  20
+     * @retro Buen Ejercicio, resulto de una manera simple
+     */
     function validateField(context) {
         
         const currentRecord = context.currentRecord;
@@ -69,6 +87,14 @@ define(['N/search', 'N/ui/dialog', "N/currentRecord"], function (search, dialog,
         }
         return true;
     }
+
+
+     /**
+     * 
+     * @calificacion = 18
+     * @retro = Buen Ejercicio, si cumple con la funcionalidad pero se ejecuta muchas veces
+     *          solo deberia ejecutarse cuando modificamos o introducimos algo al campo item
+     */
     function fieldChanged(context) {
         log.debug("context fieldchange", context);
         const currentRecord = context.currentRecord;
