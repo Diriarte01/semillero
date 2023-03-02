@@ -62,8 +62,21 @@ define([], function () {
                 sublistId: 'item',
                 fieldId: 'item'
             });
-
+            let change = search.lookupFields({
+                type: 'inventoryitem',
+                id: item,
+                columns: ['costcategory']
+            })
+            let costcategory = change['costcategory']
+            item.setCurrentSublistValue({
+                sublistId: sublistName,
+                fieldId: 'description',
+                value: costcategory,
+                ignoreFieldChange: true,
+                forceSyncSourcing: true
+            })
         }
+        return true;
     }
 
     return {
