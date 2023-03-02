@@ -22,7 +22,7 @@ G)  Enviar un correo electrónico al cliente informando del descuento aplicado e
 
 Fecha de Entrega:
 
-Semillero NetSuite: 01 de Marzo/ 7:00 pm
+Semillero NetSuite: 02 de Marzo/ 7:00 pm
 
-Api Center: 02 de Marzo/ 7:00 pm
+Api Center: 05 de Marzo/ 7:00 pm
 
