@@ -25,7 +25,7 @@
   ]
 
   function suma(orders) {
-    let sumando = 0; // Aquí almacenamos lo que se va sumando de las compras
+    let sumando = 0; // Aquí almacenamos lo que se va sumando de las compras.
     for (let i = 0; i < orders.length; i++) {
         sumando+=orders[i].total; /*Aquí con el += se va sumando sobre la 
         misma variable lo que se encuentre dentro de la propiedad total de cada uno
