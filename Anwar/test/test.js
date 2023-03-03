@@ -1,59 +1,42 @@
 /**
- *@NApiVersion 2.x
- *@NScriptType ClientScript
+ *@NApiVersion 2.1
+ *@NScriptType Restlet
  */
-define([], function() {
+define(['N/search', 'N/record'],
+    function (search, record) {
 
-    function pageInit(context) {
-        
-    }
+        function _get(context) {
+            log.debug('Initializing search of provider', context);
+            const response = { code: 400, success: false, data: [], error: [] }
+            try {
+                
+            } catch (e) {
+                log.error('un error en el codigo', e);
+                response.code = 500
+                response.error = e.message
+                response.success = false
+            } finally {
+                return JSON.stringify(response)
+            }
+        }
 
-    function saveRecord(context) {
-        
-    }
+        function _post(context) {
+           
+        }
 
-    function validateField(context) {
-        
-    }
+        function _put(context) {
 
-    function fieldChanged(context) {
-        
-    }
+        }
 
-    function postSourcing(context) {
-        
-    }
+        function _delete(context) {
 
-    function lineInit(context) {
-        
-    }
+        }
 
-    function validateDelete(context) {
-        
+        return {
+            get: _get,
+            post: _post,
+            put: _put,
+            delete: _delete
+        }
     }
-
-    function validateInsert(context) {
-        
-    }
-
-    function validateLine(context) {
-        
-    }
-
-    function sublistChanged(context) {
-        
-    }
-
-    return {
-        pageInit: pageInit,
-        saveRecord: saveRecord,
-        validateField: validateField,
-        fieldChanged: fieldChanged,
-        postSourcing: postSourcing,
-        lineInit: lineInit,
-        validateDelete: validateDelete,
-        validateInsert: validateInsert,
-        validateLine: validateLine,
-        sublistChanged: sublistChanged
-    }
-});
+);
