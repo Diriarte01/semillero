@@ -6,7 +6,7 @@
  *@NScriptType ClientScript
  */
 
-define(['N/ui/message', 'N/ui/dialog'], function (message, dialog) {
+define(['N/ui/message', 'N/ui/dialog', 'N/search'], function (message, dialog, search) {
 
     function pageInit(context) {
         try {
@@ -17,7 +17,7 @@ define(['N/ui/message', 'N/ui/dialog'], function (message, dialog) {
                     fieldId: 'entity',
                     value: '1691'
                 })
-                alert('Hola Papu')
+
             }
         }
         catch (e) {
@@ -56,12 +56,12 @@ define(['N/ui/message', 'N/ui/dialog'], function (message, dialog) {
     function validateField(context) {
 
         const obj = context.currentRecord;
-        let sublista = context.sublistId;
+        let sublist = context.sublistId;
         let sublistFieldName = context.fieldId;
 
-        if (sublista === 'item' && sublistFieldName === 'quantity') {
+        if (sublist === 'item' && sublistFieldName === 'quantity') {
             let quant = obj.getCurrentSublistValue({
-                sublistId: sublista,
+                sublistId: sublist,
                 fieldId: sublistFieldName
             });
             if (quant > 5) {
@@ -77,36 +77,57 @@ define(['N/ui/message', 'N/ui/dialog'], function (message, dialog) {
 
 
     function lineInit(context) {
-
+        let obj = context.currentRecord;
+        let sublist = context.sublistId;
+        if (sublist === 'item') {
+            obj.setCurrentSublistValue({
+                sublistId: sublist,
+                fieldId: 'quantity',
+                value: 2,
+                ignoreFieldChange: true,
+            })
+        }
+        return true;
     }
 
 
 
-    function sublistChanged(context) {
-        try {
-            let obj = context.currentRecord;
-            let sublista = context.sublistId;
+    // function fieldChanged(context) {
+    //     try {
+    //         let obj = context.currentRecord;
+    //         let sublist = context.sublistId;
+    //         log.audit('id de sublist', sublist);
 
-            if (sublista === "item") {
-                let searchItem = search.lookupFields({
-                    type: 'inventoryitem',
-                    id: sublista,
-                    columns: ['costcategory']
-                })
+    //         if (sublist === "item") {
+    //             let item = obj.getCurrentSublistValue({
+    //                 sublistId: sublist,
+    //                 fieldId: sublist,
+    //             })
+    //             log.audit('variable item', item);
 
-                let category = searchItem['costcategory']
+    //             let searchItem = search.lookupFields({
+    //                 type: 'inventoryitem',
+    //                 id: item,
+    //                 columns: ['costcategory']
+    //             })
 
-                obj.setValue({
-                    fieldId: 'description',
-                    value: category
-                })
+    //             log.audit('variable searchItem', searchItem);
+    //             let category = searchItem['costcategory']
 
-            }
-        }
-        catch (e) {
-            log.error('Se ha generado un error', e)
-        }
-    }
+    //             obj.setCurrentSublistValue({
+    //                 sublistId: sublist,
+    //                 fieldId: 'description',
+    //                 value: category,
+    //                 ignoreFieldChange: true,
+    //             })
+
+    //         }
+    //         return true
+    //     }
+    //     catch (e) {
+    //         log.error('Se ha generado un error', e)
+    //     }
+    // }
 
 
     return {
@@ -114,6 +135,6 @@ define(['N/ui/message', 'N/ui/dialog'], function (message, dialog) {
         saveRecord: saveRecord,
         validateField: validateField,
         lineInit: lineInit,
-        sublistChanged: sublistChanged
+      
     }
 });
