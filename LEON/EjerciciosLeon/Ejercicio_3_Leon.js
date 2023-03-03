@@ -16,7 +16,7 @@ define(['N/search', 'N/email'], function (search, email) {
     function beforeSubmit(context) {
 
         try {
-            log.audit('entra', 'entra')
+            
             const obj = context.newRecord;
             const customerId = obj.getValue('entity');
             let invoiceSearchObj = search.create({
@@ -120,19 +120,19 @@ define(['N/search', 'N/email'], function (search, email) {
             let total = obj.getValue("total")
             let balanceAmount = parseFloat(balanceObj.balance)
 
-            if ((balanceAmount == 0 && creditLimit > total) || (balanceAmount > 0 && (total + balanceAmount) <= creditLimit))
-                if (balanceAmount == 0 && creditLimit > total) {
-                    obj.setValue({
-                        fieldId: "approvalstatus",
-                        value: 2,
-                    })
-                }
-                else if ((total + balanceAmount) > creditLimit) {
-                    obj.setValue({
-                        fieldId: "approvalstatus",
-                        value: 3,
-                    })
-                }
+            if ((balanceAmount == 0 && creditLimit > total) || (balanceAmount > 0 && (total + balanceAmount) <= creditLimit)) {
+                obj.setValue({
+                    fieldId: "approvalstatus",
+                    value: 2,
+                })
+            }
+
+            else if ((total + balanceAmount) > creditLimit) {
+                obj.setValue({
+                    fieldId: "approvalstatus",
+                    value: 3,
+                })
+            }
         }
 
         catch (e) {
@@ -160,20 +160,12 @@ define(['N/search', 'N/email'], function (search, email) {
 
             if (verifyEmail !== "") {
 
-                //Inciso B
-                if (approved == 3) {
-                    email.send({
-                        author: -5,
-                        body: "El pedido ha sido rechazado por falta de crédito",
-                        recipients: customerId,
-                        subject: "Transacción rechazada",
-                    })
-                }
+                
                 //Inciso G
-                else if (approved == 2 && discount != "") {
+                if (approved == 2 && discount !== "") {
                     email.send({
                         author: -5,
-                        body: `¡Gracias por tu compra! Te informamos que se te ha aplicado un descuento de ${discount}. El costo final de tu pedido quedó en ${total} `,
+                        body: `¡Gracias por tu compra! Te informamos que se te ha aplicado un descuento de ${discount}. El costo final de tu pedido quedó en ${total}`,
                         recipients: customerId,
                         subject: "Transacción completada con éxito",
                     })
@@ -181,9 +173,19 @@ define(['N/search', 'N/email'], function (search, email) {
                 else if (approved == 2) {
                     email.send({
                         author: -5,
-                        body: `¡Gracias por tu compra! Estás cada vez más cerca de obtener un descuento.`,
+                        body: "¡Gracias por tu compra! Estás cada vez más cerca de obtener un descuento.",
                         recipients: customerId,
                         subject: "Transacción completada con éxito",
+                    })
+                }
+
+                //Inciso B
+                else if (approved == 3) {
+                    email.send({
+                        author: -5,
+                        body: "El pedido ha sido rechazado por falta de crédito",
+                        recipients: customerId,
+                        subject: "Transacción rechazada",
                     })
                 }
 
