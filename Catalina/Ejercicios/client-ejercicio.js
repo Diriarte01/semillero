@@ -5,24 +5,25 @@
  *fecha 28/02/2023
  */
 define(['N/search', 'N/ui/dialog', "N/currentRecord"], function (search, dialog, currentRecord) {
+
     function pageInit(context) {
-        const currentRecord = context.currentRecord
-        if (context.mode === "create") {
-            currentRecord.setValue({
-                fieldId: "entity",
-                value: 1665
-            })
-        } else {
-            let listId = context.sublistId;
-            log.debug("listId", listId)
-            return;
+        try {
+            const record = context.currentRecord
+            if (context.mode === "create") {
+                record.setValue({
+                    fieldId: "entity",
+                    value: -1,
+                })
+            }
+        } catch (error) {
+            log.error(error)
         }
     }
 
     function saveRecord(context) {
         try {
-            const currentRecord = context.currentRecord
-            let num = currentRecord.getLineCount({
+            const record = context.currentRecord
+            let num = record.getLineCount({
                 sublistId: "item"
             })
             let view = {
@@ -44,12 +45,12 @@ define(['N/search', 'N/ui/dialog', "N/currentRecord"], function (search, dialog,
             log.error(error)
         }
     }
+
     function validateField(context) {
-        
-        const currentRecord = context.currentRecord;
+        const record = context.currentRecord;
         if (context.sublistId === "item" && context.fieldId === "quantity") {
             let quantity;
-            quantity = currentRecord.getCurrentSublistValue({
+            quantity = record.getCurrentSublistValue({
                 sublistId: "item",
                 fieldId: "quantity",
             })
@@ -59,7 +60,7 @@ define(['N/search', 'N/ui/dialog', "N/currentRecord"], function (search, dialog,
                     message: "No se puede exceder de 5 articulos para agregar"
                 }
                 dialog.alert(view);
-                currentRecord.setCurrentSublistValue({
+                record.setCurrentSublistValue({
                     sublistId: "item",
                     fieldId: "quantity",
                     value: 0,
@@ -69,28 +70,57 @@ define(['N/search', 'N/ui/dialog', "N/currentRecord"], function (search, dialog,
         }
         return true;
     }
+
     function fieldChanged(context) {
-        log.debug("context fieldchange", context);
-        const currentRecord = context.currentRecord;
+        const record = context.currentRecord;
         let sublistId = context.sublistId;
 
-        if(sublistId === "item") {
-            let sublist = currentRecord.getCurrentSublistValue({
+        if (sublistId === "item") {
+            let sublist = record.getCurrentSublistValue({
                 sublistId: sublistId,
-                fieldId: sublistId
+                fieldId: sublistId,
             })
-            let change = search.lookupFields({
-            type: "inventoryitem",
-            id: sublist,
-            columns: ["costcategory"]
+            if (sublist) {
+                
+                let change = search.lookupFields({
+                    type: "inventoryitem",
+                    id: sublist,
+                    columns: ["costcategory"]
+                })
+                log.debug("sublist", typeof(sublist));
+                change = change.costcategory;
+                record.setCurrentSublistValue({
+                    sublistId: sublistId,
+                    fieldId: "description",
+                    value: change,
+                    ignoreFieldChange: true,
+                })
+            }
+        }
+    }
+
+    function lineInit(contex) {
+
+        const record = contex.currentRecord;
+        let sublistId2 = contex.sublistId;
+        log.debug("rsublist2", sublistId2)
+        if (sublistId2 === "item") {
+            record.setCurrentSublistValue({
+                sublistId: sublistId2,
+                fieldId: "quantity",
+                value: 2,
+                ignoreFieldChange: true,
+                forceSyncSourcing: true
+            })
+        }
+        log.debug("lineInit", contex);
         
-        })
-    }}
-    
+    }
     return {
         pageInit: pageInit,
         saveRecord: saveRecord,
         validateField: validateField,
-        fieldChanged: fieldChanged
+        fieldChanged: fieldChanged,
+        lineInit: lineInit,
     }
 });
