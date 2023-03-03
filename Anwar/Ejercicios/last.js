@@ -2,13 +2,9 @@
  *@NApiVersion 2.x
  *@NScriptType UserEventScript
  */
-define(['N/search', 'N/log'], function (search, log) {
+define(['N/search'], function (search) {
 
-    function weirdsearch(){
-        /* 
-        let obj = context.newRecord;
-        let customerId = obj.getValue("entity");
- */
+    function beforeLoad(context) {
         var invoiceSearchObj = search.create({
             type: "invoice",
             filters:
@@ -49,38 +45,23 @@ define(['N/search', 'N/log'], function (search, log) {
         });
 
         /*
-        invoiceSearchObj.id="customsearch1677821392606";
+        invoiceSearchObj.id="customsearch1677815188440";
         invoiceSearchObj.title="Custom Búsqueda de Transacción (copy)";
         var newSearchId = invoiceSearchObj.save();
         */
-        
     }
 
     function beforeSubmit(context) {
 
-        /* if (searchResultCount == 0) {
-            let discount = obj.setValue({
-                fieldId: "discountitem",
-                value: 340
-            });
-        }
-        else if (searchResultCount >= 5 && searchResultCount < 10) {
-            let discount = obj.setValue({
-                fieldId: "discountitem",
-                value: 341
-            });
-        }
-        else if (searchResultCount >= 10) {
-            let discount = obj.setValue({
-                fieldId: "discountitem",
-                value: 340
-            });
-        } */
+    }
+
+    function afterSubmit(context) {
+
     }
 
     return {
-        //beforeLoad: beforeLoad,
+        beforeLoad: beforeLoad,
         beforeSubmit: beforeSubmit,
-        //afterSubmit: afterSubmit
+        afterSubmit: afterSubmit
     }
 });
