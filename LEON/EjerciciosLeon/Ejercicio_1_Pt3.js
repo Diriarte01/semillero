@@ -16,4 +16,3 @@ function filtrarNombres(array, palabra_a_buscar) {
 }
 
 console.log(filtrarNombres(nombres, term))
-//

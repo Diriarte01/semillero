@@ -8,7 +8,7 @@
 let array = [1, 2, 2, 3, 3, 3]
 
 function numberOfCharacters(arrayNumbers) {
-    let result = {}; //Objeto que guardará el resultado
+    let result = {}; //Objeto que guardará el resultado.
 
     for (let i = 0; i < arrayNumbers.length; i++) {
         if (result[arrayNumbers[i]]) { //¿Existe la propiedad del objeto result?
