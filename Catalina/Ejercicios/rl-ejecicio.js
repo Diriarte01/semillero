@@ -76,14 +76,11 @@ define(["N/search", "N/record"], function (search, record) {
                 fieldId: "phone",
                 value: data.phone,
             })
-            for (let i = 0; i < data.length; i++) {
-                recordObj.setSublistValue({
-                    sublistId: "company",
-                    fieldId: "company",
-                    value: data.company,
-                    line: i
-                })
-            }
+            recordObj.setValue({
+                fieldId: "company",
+                value: data.company,
+            })
+
             recordObj.setValue({
                 fieldId: "title",
                 value: data.title,
@@ -106,7 +103,7 @@ define(["N/search", "N/record"], function (search, record) {
             return JSON.stringify(response);
         }
     }
-    
+
 
     /* Buscamos por el id para cambiar datos o tambien por el nombre sin colocar id */
     function _put(context) {
@@ -139,14 +136,10 @@ define(["N/search", "N/record"], function (search, record) {
                     id: obj.internalId,
                     isDynamic: false,
                 })
-                for (let i = 0; i < data.length; i++) {
-                    recordObj.setSublistValue({
-                        sublistId: "company",
-                        fieldId: "company",
-                        value: data.company,
-                        line: i
-                    })
-                }
+                recordObj.setValue({
+                    fieldId: "company",
+                    value: data.company,
+                })
                 recordObj.setValue({
                     fieldId: "entityid",
                     value: data.name,
