@@ -1,160 +1,144 @@
 /**
  *@NApiVersion 2.1
- *@NScriptType UserEventScript
- *@author Anwar Ruiz
- *Fecha 3/2/2023
+ *@NScriptType Restlet
  */
-define(["N/search", "N/record", 'N/email'], function (search, record, email) {
+define(['N/search', 'N/record'],
+    function (search, record) {
 
-    function beforeSubmit(context) {
-        try {
-            const obj = context.newRecord;
-            const customerId = obj.getValue("entity");
-            let invoiceSearchObj = search.create({
-                type: "invoice",
-                filters:
-                    [
-                        ["name", "anyof", customerId],
-                        "AND",
-                        ["type", "anyof", "CustInvc"],
-                        "AND",
-                        ["mainline", "is", "T"],
-                        "AND",
-                        ["trandate", "notbefore", "thirtydaysago"]
-                    ],
-                columns:
-                    [
-                        search.createColumn({
-                            name: "ordertype",
-                            sort: search.Sort.ASC,
-                            label: "Tipo de orden"
-                        }),
-                        search.createColumn({ name: "mainline", label: "*" }),
-                        search.createColumn({ name: "trandate", label: "Fecha" }),
-                        search.createColumn({ name: "asofdate", label: "Fecha de corte" }),
-                        search.createColumn({ name: "postingperiod", label: "Período" }),
-                        search.createColumn({ name: "taxperiod", label: "Período fiscal" }),
-                        search.createColumn({ name: "type", label: "Tipo" }),
-                        search.createColumn({ name: "tranid", label: "Número de documento" }),
-                        search.createColumn({ name: "entity", label: "Nombre" }),
-                        search.createColumn({ name: "account", label: "Cuenta" }),
-                        search.createColumn({ name: "memo", label: "Nota" }),
-                        search.createColumn({ name: "amount", label: "Importe" })
-                    ]
-            });
-            let searchResultCount = invoiceSearchObj.runPaged().count;
+        function _get(context) {
+            log.debug('Initializing search of contacts', context);
+            const response = { code: 400, success: true, data: [], error: [] }
+            try {
+                let contactId = context.contact;
+                log.debug("contactId", contactId)
+                let contactData = [];
+                var filter = [];
 
-            function getDiscount(searchResultCount) {
-                let discount;
-                if (searchResultCount == 0) {
-                    discount = 340;
+                filter.push(["isinactive", "is", "F"]);
+
+                if (contactId != "all") {
+                    filter.push("AND", ["internalid", "anyof", contactId])
                 }
-                else if (searchResultCount >= 5 && searchResultCount < 10) {
-                    discount = 341;
-                }
-                else if (searchResultCount >= 10) {
-                    discount = 340;
-                }
-                return discount;
-            }
 
-            let discount = getDiscount(searchResultCount);
-            obj.setValue({
-                fieldId: "discountitem",
-                value: discount
-            });
+                var contactSearchObj = search.create({
+                    type: "contact",
+                    filters:
+                        [
+                            filter
+                        ],
+                    columns:
+                        [
+                            search.createColumn({ name: "internalid", label: "ID interno" }),
+                            search.createColumn({ name: "entityid", label: "Nombre" }),
+                            search.createColumn({ name: "email", label: "Correo electrónico" }),
+                            search.createColumn({ name: "phone", label: "Teléfono" }),
+                            search.createColumn({ name: "company", label: "Empresa" }),
+                            search.createColumn({ name: "title", label: "Puesto de trabajo" })
+                        ]
+                });
+                var searchResultCount = contactSearchObj.runPaged().count;
+                log.debug("contactSearchObj result count", searchResultCount);
+                contactSearchObj.run().each(function (result) {
+                    contactData.push({
+                        internalId: result.getValue("internalid"),
+                        entityName: result.getValue("entityid"),
+                        email: result.getValue("email"),
+                        phone: result.getValue("phone"),
+                        company: result.getValue("company"),
+                        rol: result.getValue("title")
+                    })
 
-            let category = search.lookupFields({
-                type: "customer",
-                id: customerId,
-                columns: ["category"]
-            }).category?.[0]?.text;
-
-            if (category !== "Premium") {
-                return; // no se aplica descuento
-            }
-
-            obj.setValue({
-                fieldId: "discountitem",
-                value: 340,
-            });
-
-            function getApprovalStatus(customerId, total) {
-                let limitCredit = search.lookupFields({
-                    type: "customer",
-                    id: customerId,
-                    columns: ["creditlimit"]
-                }).creditlimit;
-
-                let balanceObj = search.lookupFields({
-                    type: "customer",
-                    id: customerId,
-                    columns: ["balance"]
+                    return contactData;
                 });
 
-                let total = obj.getValue("total")
-                let balance = parseFloat(balanceObj.balance);
+                log.debug("contactData", contactData)
+                response.isSuccessful = true;
+                response.data = contactData
+                response.message = 'La transaccion fue exitosa';
+                response.code = 'S4-200';
+                log.audit("response", response)
+                return JSON.stringify(response);
 
-                if (balance === 0 && limitCredit > total) {
-                    return 2; // aprobado
-                } else if (balance > 0 && (total + balance) <= limitCredit) {
-                    return 2; // aprobado
-                } else if ((total + balance) > limitCredit) {
-                    return 3; // rechazado
-                }
+            } catch (e) {
+                log.error({
+                    title: "¡Ya nos exhibiste!",
+                    details: e
+                })
+            } finally {
+                return JSON.stringify(response)
+            }
+        }
+
+        function _post(context) {
+            log.debug('Initializing creation of a new contact', context);
+            const response = { code: 400, success: false, data: [], error: [] }
+            try {
+                let contact = request.contact;
+                //-------Creacion del record---------
+                let contactRecord = record.create({
+                    type: record.Type.CONTACT,
+                    isDynamic: true,
+                })
+                //--------------
+                //---Name---
+                contactRecord.setValue({
+                    fieldId: 'entityid', //Revisar ID
+                    value: contact.entityid,
+                })
+                //---Email---
+                contactRecord.setValue({
+                    fieldId: 'email', //Revisar ID
+                    value: contact.email,
+                })
+                //---Phone---
+                contactRecord.setValue({
+                    fieldId: 'phone', //Revisar ID
+                    value: contact.phone,
+                })
+                //---COMPANY---
+                contactRecord.setValue({
+                    fieldId: 'company', //Revisar ID
+                    value: contact.company,
+                })
+                //---External ID---
+                contactRecord.setValue({
+                    fieldId: 'title', //Revisar ID
+                    value: contact.workrol,
+                })
+                //Guarda el record
+                let contactRecordId = contactRecord.save();
+                log.debug("Se creo la OV", contactRecordId);
+
+                response.isSuccessful = true;
+                response.data = contactData
+                response.message = 'La transaccion fue exitosa';
+                response.code = 'S4-200';
+                log.audit("response", response)
+                return JSON.stringify(response);
+            } catch (error) {
+                log.error('Error creating', e.message);
+                response.code = 500
+                response.error = e.message
+                response.success = false
+            } finally {
+                return response
             }
 
-            let approvalStatus = getApprovalStatus(customerId, obj.getValue("total"));
+        }
 
-            obj.setValue({
-                fieldId: "approvalstatus",
-                value: approvalStatus,
-            });
+        function _put(context) {
 
-        } catch (error) {
-            log.error(error);
+        }
+
+        function _delete(context) {
+
+        }
+
+        return {
+            get: _get,
+            post: _post,
+            put: _put,
+            delete: _delete
         }
     }
-
-    function afterSubmit(context) {
-        try {
-            const obj = context.newRecord;
-            const customerId = obj.getValue("entity");
-            const approval = obj.getValue("approvalstatus");
-            const discount = obj.getText("discountitem");
-            const total = obj.getValue("total")
-            let checkEmail = search.lookupFields({
-                type: "customer",
-                id: customerId,
-                columns: ["email"]
-            })
-            checkEmail = checkEmail.email;
-
-            if (checkEmail !== "") {
-                if (approval == 3) {
-                    email.send({
-                        author: -5,
-                        body: "Se ha rechazado el pedido por falta de credito",
-                        recipients: customerId,
-                        subject: "Ha sido declinada su transaccion",
-                    })
-                } else if (approval == 2) {
-                    email.send({
-                        author: -5,
-                        body: `Su pedido tiene descuento de ${discount}, el se ha realizado un cobro con la cantidad de ${total} `,
-                        recipients: customerId,
-                        subject: "Ha sido aprovada su transaccion",
-                    })
-                }
-            }
-        } catch (error) {
-            log.error(error);
-        }
-    }
-
-    return {
-        //beforeLoad: beforeLoad,
-        beforeSubmit: beforeSubmit,
-        afterSubmit: afterSubmit
-    }
-});
+);

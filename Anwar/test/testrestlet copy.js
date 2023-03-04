@@ -9,29 +9,28 @@ define(['N/search', 'N/record'],
             log.debug('Initializing search of customer', context);
             const response = { code: 400, success: false, data: [], error: [] }
             try {
-                const type = 'customer';
+                const type = 'contact';
                 const filters = [];
-                const customer = context.entity
+                let entityid = context.entityid
 
-                if (customer) {
-                    filters.push(["internalid", "anyof", customer])
+                if (entityid != "all") {
+                    filters.push(["internalid", "anyof", entityid])
                 }
                 const columns = [search.createColumn({ name: "entityid", })];
-                columns.push(search.createColumn({ name: "isperson", label: "Es individual" }));
                 columns.push(search.createColumn({ name: "companyname", label: "Nombre de la empresa" }));
                 columns.push(search.createColumn({ name: "email", label: "Correo electrónico" }));
                 columns.push(search.createColumn({ name: "phone", label: "Teléfono" }))
-                let searchcustomer = search.create({ type: type, filters: filters, columns: columns });
+                let searchentityid = search.create({ type: type, filters: filters, columns: columns });
 
-                searchcustomer.run().each(function (result) {
+                searchentityid.run().each(function (result) {
                     let obj = new Object();
-                    obj.internalId = result.id;
-                    let isperson = result.getValue('isperson') == 'T' ? true : false;
-                    if (isperson) {
-                        obj.name = result.getValue('entityid');
-                    } else {
-                        obj.name = result.getValue('companyname');
-                    }
+                    /*                     obj.internalId = result.id;
+                                        let isperson = result.getValue('isperson') == 'T' ? true : false;
+                                        if (isperson) {
+                                            obj.name = result.getValue('entityid');
+                                        } else {
+                                            obj.name = result.getValue('companyname');
+                                        } */
                     obj.email = result.getValue('email');
                     obj.phone = result.getValue('phone');
                     response.data.push(obj);

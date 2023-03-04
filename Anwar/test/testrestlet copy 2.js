@@ -68,7 +68,7 @@ define(['N/search', 'N/record'], function (search, record) {
     }
 
     function _post(context) {
-        let response = { code: 400, success: false, data: [], error: [] }
+        const response = { code: 400, success: false, data: [], error: [] };
         try {
             log.debug('Initializing creation of a new contact', context);
             const data = context.data;
@@ -79,53 +79,51 @@ define(['N/search', 'N/record'], function (search, record) {
             })
 
             contact.setValue({
-                fieldId: 'entityid',
+                fieldId: "entityid", //EntityName
                 value: data.entityName,
             })
 
             contact.setValue({
-                fieldId: 'email',
+                fieldId: "email", //Email
                 value: data.email,
             })
 
             contact.setValue({
-                fieldId: 'phone',
+                fieldId: "phone", //Phone
                 value: data.phone,
             })
 
             for (let i = 0; i < data.length; i++) {
                 contact.setSublistValue({
                     sublistId: "company",
-                    fieldId: 'company',
-                    line: i,
+                    fieldId: "company",
                     value: data.company,
+                    line: i
                 })
             }
 
             contact.setValue({
-                fieldId: 'title',
-                value: data.title,
+                fieldId: "title", //Rol
+                value: data.rol,
             })
 
             contact.setValue({
-                fieldId: 'subsidiary',
+                fieldId: "subsidiary", //subsidiary
                 value: data.subsidiary,
             })
-            log.debug('is data ok?', data);
 
             const saveContact = contact.save();
             response.data.push({
                 id: saveContact,
-                saved: data
+                saved: data,
+                //typeRecord: "contact",
             }
 
             )
             log.debug("Se creó el contacto", data);
             response.success = true;
             response.code = '201';
-
-
-        } catch (e) {
+        } catch (error) {
             log.error('Error creatingg', e.message);
             response.code = 500
             response.error.push(e.message);
@@ -136,96 +134,11 @@ define(['N/search', 'N/record'], function (search, record) {
     }
 
     function _put(context) {
-        let response = { code: 400, success: false, data: [], error: [] }
-        try {
-            log.debug('Initializing update of a contact', context);
-            const data = context.data;
 
-            let contact = record.load({
-                type: "contact",
-                id: data.internalId,
-                isDynamic: false,
-            })
-
-            contact.setValue({
-                fieldId: 'entityid',
-                value: data.entityName,
-            })
-
-            contact.setValue({
-                fieldId: 'email',
-                value: data.email,
-            })
-
-            contact.setValue({
-                fieldId: 'phone',
-                value: data.phone,
-            })
-
-            for (let i = 0; i < data.length; i++) {
-                contact.setSublistValue({
-                    sublistId: "company",
-                    fieldId: 'company',
-                    line: i,
-                    value: data.company,
-                })
-            }
-
-            contact.setValue({
-                fieldId: 'title',
-                value: data.title,
-            })
-
-            contact.setValue({
-                fieldId: 'subsidiary',
-                value: data.subsidiary,
-            })
-
-            const saveContact = contact.save();
-            response.data.push({
-                id: saveContact,
-                saved: data
-            }
-
-            )
-            log.debug("Se creó el contacto", data);
-            response.success = true;
-            response.code = '201';
-        } catch (e) {
-            log.error('Error creatingg', e.message);
-            response.code = 500
-            response.error = e.message
-            response.success = false
-        } finally {
-            return response
-        }
     }
 
     function _delete(context) {
-        let response = { code: 400, success: false, data: [], error: [] }
-        try {
-            log.debug('Initializing disposal of a contact', context);
-            const data = context.id;
 
-            record.delete({
-                type: "contact",
-                id: data
-            });
-
-            response.data.push({
-                Deleted: "contacto eliminado",
-            })
-
-            response.success = true;
-            response.code = '201';
-        } catch (e) {
-            log.error('Error deleting', e.message);
-            response.code = 500
-            response.error.push(e.message);
-            response.success = false
-        } finally {
-            return response
-        }
     }
 
     return {
