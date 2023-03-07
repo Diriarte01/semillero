@@ -7,7 +7,6 @@
 define(["N/https", "N/ui/serverWidget", "N/record"], function (https, serverWidget, record) {
 
     const products = (form, body) => {
-        // body[0].id == "" ? log.debug("error true") : log.debug("error false");
         let sublistProducts = form.addSublist({
             id: "custpage_s4_sublist_product",
             label: "Products",
@@ -365,6 +364,35 @@ define(["N/https", "N/ui/serverWidget", "N/record"], function (https, serverWidg
                         })
                     })
                     /* Proceso de render */
+                    res2 = JSON.parse(res2.body)
+                    log.debug("res", res2.category)
+                    const fieldhtml = form.addField({
+                        label: 'Show',
+                        id: 'custpage_s4_html',
+                        type: 'INLINEHTML',
+                        container: 'custpage_s4_fiel_group'
+                    })
+                    let html = `
+                        <div>
+                        <style>
+                            @import url('https://fonts.googleapis.com/css2?family=Mukta:wght@300;400;500&display=swap');
+                            p, h1 {
+                                color:green;
+                                font-size:20px;
+                                font-family: 'Mukta', sans-serif;
+                                font-weight: bold;
+                            }
+                        </style>
+                        <h1>Se ha Creado el Producto</h1>
+                        <p>ID: ${res2.id} </p>
+                            <p>NOMBRE: ${res2.title}</p>
+                            <p>PRECIO: ${res2.price}</p>
+                            <p>DESCRICION: ${res2.description}</p>
+                            <p>CATEGORIA: ${res2.category["name"]}</p>
+                            <p>IMAGEN: <a href="${res2.images}" target="_blank">Ver Imagen</a></p>
+                        </div>
+                    `
+                    fieldhtml.defaultValue = html
                     
                 }
             }
