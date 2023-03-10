@@ -5,66 +5,76 @@
 define(["N/file", 'N/record'], function (file, record) {
   function execute(context) {
     try {
-      let csvfile = file.load({
+      let fileObj = file.load({
         id: 3158
-      });
-      let csvfileData = [];
-      csvfile.lines.iterator().each(function (line) {
-        let w = line.value.split(";");
-        csvfileData.push({
-          tarea: w[0],
-          practicante: w[1],
-          descripcion: w[2],
-          fechac: w[3],
-          fechat: w[4],
-          fechal: w[5],
-          estado: w[6]
-        });
-        return true;
-      });
-      csvfileData.shift();
-      const valoresUnicos = {};
-      csvfileData.forEach(objeto => {
-        const primerValor = objeto.tarea;
-        if (!valoresUnicos[primerValor]) {
-          valoresUnicos[primerValor] = true;
-        }
-      });
-      const cantidadValoresUnicos = Object.keys(valoresUnicos).length;
-      let father = [];
-      for (let i = 0; i < cantidadValoresUnicos; i++) {
-        father.push(csvfileData.find(w => w.tarea.includes(i)));
-      }
-      for (let i = 0; i < cantidadValoresUnicos; i++) {
-        let recordFather = record.create({
-          type: "customrecord_padre",
-          isDynamic: false,
-        })
-        recordFather.setValue({
-          fieldId: 'name',
-          value: father[i].tarea,
-        })
-        const saverecordFather = recordFather.save();
-        log.debug("Se creó el registro padre", saverecordFather);
-        for (let y = 0; y < csvfileData.length; y++) {
-          if (csvfileData[y].tarea == i + 1) {
-            let recordChild = record.create({
-              type: "customrecord139",
-              isDynamic: false,
-            })
-            recordChild.setValue({
-              fieldId: 'name',
-              value: csvfileData[y].tarea,
-            })
-            recordChild.setValue({
-              fieldId: 'custrecord_s4_sns_link',
-              value: saverecordFather,
-            })
-            const saverecordChild = recordChild.save();
-            log.debug("Se creó el registro hijo", saverecordChild);
+      })
+      let iterator = fileObj.lines.iterator();
+      let csv = [];
+      let dadtask = []
+      dadtask.push(0)
+      let cont = 0
+      iterator.each((line) => {
+        if (cont == 0) {
+          cont++;
+          return true;
+        } else {
+          let res = line.value.split(";");
+          if (dadtask.includes(res[0])) {
+          } else {
+            dadtask.push(res[0])
           }
+          csv.push({
+            tarea: res[0],
+            practicante: res[1],
+            descripcion: res[2],
+            fechaCreate: res[3],
+            fechaTermino: res[4],
+            fechaCompleta: res[5],
+            estado: res[6]
+          })
+          return true;
         }
+      })
+      dadtask.shift()
+      dadtask.sort((a, b) => a - b)
+      csv.sort((a, b) => a.tarea - b.tarea)
+      let sonstaks = {}
+      let task = {}
+      for (let i = 0; i < dadtask.length; i++) {
+        sonstaks = csv.filter(a => a.tarea === dadtask[i])
+        task["Tarea" + dadtask[i]] = sonstaks
       }
+      log.debug('tareas', task);
+
+      task[0].forEach(obj => {
+        const fechaCreate = obj["fechaCreate"];
+        log.debug('fecha de creacion', fechaCreate);
+      });
+
+
+
+
+      /* task.forEach(obj => {
+        
+                let recordFather = record.create({
+                  type: "customrecord_padre",
+                  isDynamic: false,
+                })
+                recordFather.setValue({
+                  fieldId: 'name',
+                  value: task[0].tarea,
+                })
+                const saverecordFather = recordFather.save();
+        
+        log.debug("nombre", task[0].tarea);
+        log.debug("limite", obj.length);
+
+
+        task.Tarea1.forEach(element => {
+          log.debug("entra");
+        });
+      }); */
+
     }
     catch (error) {
       log.debug('error', error.message);
