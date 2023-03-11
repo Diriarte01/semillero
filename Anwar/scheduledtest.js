@@ -44,12 +44,27 @@ define(["N/file", 'N/record'], function (file, record) {
         sonstaks = csv.filter(a => a.tarea === dadtask[i])
         task["Tarea" + dadtask[i]] = sonstaks
       }
-      log.debug('tareas', task);
+      log.debug('tareas', dadtask.length);
 
-      task[0].forEach(obj => {
-        const fechaCreate = obj["fechaCreate"];
-        log.debug('fecha de creacion', fechaCreate);
-      });
+      for (let y = 0; y < dadtask.length; y++) {
+        log.debug('y', y);
+
+        for (var tarea in task) {
+          for (var i = 0; i < task[tarea].length; i++) {
+            log.debug("que da?", task[tarea][i].descripcion);
+          }
+        }
+
+        task[i].forEach(obj => {
+          const tarea = obj["tarea"];
+          log.debug('tarea', tarea);
+        });
+      }
+
+
+
+
+
 
 
 
