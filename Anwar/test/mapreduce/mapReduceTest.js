@@ -5,6 +5,7 @@
 define(["N/file", 'N/record'], function (file, record) {
 
     function execute(context) {
+        log.debug('try');
         try {
             let csvfile = file.load({
                 id: 3158
@@ -27,6 +28,14 @@ define(["N/file", 'N/record'], function (file, record) {
 
             log.debug(csvfileData);
 
+            const uniqueTasks = Object.values(csvfileData).reduce((acc, curr) => {
+                curr.forEach(item => {
+                    acc.add(item.tarea);
+                });
+                return acc;
+            }, new Set());
+
+            log.debug([...uniqueTasks]); // muestra los valores únicos como un array
         }
         catch (error) {
             log.debug('error', error.message);
