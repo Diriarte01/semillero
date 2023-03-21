@@ -10,36 +10,27 @@ define(["N/search", "N/record", 'N/email'], function (search, record, email) {
         try {
             const obj = context.newRecord;
             const client = obj.getValue("entity");
+            const type = "invoice";
+            const filters = [];
+            filters.push(["type", "anyof", "CustInvc"]);
+            filters.push("AND", ["mainline", "is", "T"]);
+            filters.push("AND", ["trandate", "notbefore", "thirtydaysago"]);
+            filters.push("AND", ["name", "anyof", client]);
+            const columns = [search.createColumn({ name: "trandate", sort: search.Sort.DESC, label: "Fecha" }),]
+            columns.push(search.createColumn({ name: "type", label: "Tipo" }));
+            columns.push(search.createColumn({ name: "tranid", label: "Número de documento" }));
+            columns.push(search.createColumn({ name: "otherrefnum", label: "PO/Check #" }));
+            columns.push(search.createColumn({ name: "entity", label: "Nombre" }));
+            columns.push(search.createColumn({ name: "amount", label: "Importe" }));
+            columns.push(search.createColumn({ name: "fxamount", label: "Importe (moneda extranjera)" }));
+            columns.push(search.createColumn({ name: "currency", label: "Moneda" }));
+            columns.push(search.createColumn({ name: "statusref", label: "Estado" }));
+            columns.push(search.createColumn({ name: "daysopen", label: "Días pendientes" }));
+
             let invoiceSearchObj = search.create({
-                type: "invoice",
-                filters:
-                    [
-                        ["type", "anyof", "CustInvc"],
-                        "AND",
-                        ["mainline", "is", "T"],
-                        "AND",
-                        ["trandate", "notbefore", "thirtydaysago"],
-                        "AND",
-                        ["name", "anyof", client]
-                    ],
-                columns:
-                    [
-                        search.createColumn({
-                            name: "trandate",
-                            sort: search.Sort.DESC,
-                            label: "Fecha"
-                        }),
-                        search.createColumn({ name: "type", label: "Tipo" }),
-                        search.createColumn({ name: "tranid", label: "Número de documento" }),
-                        search.createColumn({ name: "otherrefnum", label: "PO/Check #" }),
-                        search.createColumn({ name: "entity", label: "Nombre" }),
-                        search.createColumn({ name: "amount", label: "Importe" }),
-                        search.createColumn({ name: "fxamount", label: "Importe (moneda extranjera)" }),
-                        search.createColumn({ name: "currency", label: "Moneda" }),
-                        search.createColumn({ name: "statusref", label: "Estado" }),
-                        search.createColumn({ name: "daysopen", label: "Días pendientes" })
-                    ]
+                type: type, filters: filters, columns: columns
             });
+
             let searchResultCount = invoiceSearchObj.runPaged().count;
 
             if (searchResultCount == 0 || searchResultCount >= 10) {
@@ -96,7 +87,7 @@ define(["N/search", "N/record", 'N/email'], function (search, record, email) {
                 id: client,
                 columns: ["balance"]
             })
-            let total = obj.getValue("total")
+            const total = obj.getValue("total")
             let balance = parseFloat(balanceObj.balance);
 
             if (balance == 0 && limitCredit > total) { // caso exito 
@@ -116,28 +107,17 @@ define(["N/search", "N/record", 'N/email'], function (search, record, email) {
                     value: 3,
                 })
             }
-        } catch (error) {
-            log.error(error);
-        }
-
-    }
-
-    function afterSubmit(context) {
-        try {
-            const obj = context.newRecord
-            const client = obj.getValue("entity");
+            /* Punto B y G */
             const approval = obj.getValue("approvalstatus");
-            const discount = obj.getText("discountitem");
-            const total = obj.getValue("total")
+            const discount = obj.getValue("discountitem");
+
             let checkEmail = search.lookupFields({
                 type: "customer",
                 id: client,
                 columns: ["email"]
             })
             checkEmail = checkEmail.email;
-    
             if (checkEmail !== "") {
-                
                 if (approval == 3) {
                     email.send({
                         author: -5,
@@ -155,11 +135,13 @@ define(["N/search", "N/record", 'N/email'], function (search, record, email) {
                 }
             }
         } catch (error) {
-            log.error(error);
+            log.error("error en beforeS", error);
         }
+
     }
+
     return {
         beforeSubmit: beforeSubmit,
-        afterSubmit: afterSubmit
+
     }
 });
