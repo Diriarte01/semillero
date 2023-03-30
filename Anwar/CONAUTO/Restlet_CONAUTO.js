@@ -39,10 +39,6 @@ define(["N/record", "N/search"], function (record, search) {
             });
             // Set field values of the new record
             newRecord.setValue({
-                fieldId: 'custrecord_s4_sns_folio_invoice',
-                value: data.folio.toString()
-            });
-            newRecord.setValue({
                 fieldId: 'custrecord_s4_sns_folio_debt',
                 value: data.debt.toString()
             });
@@ -60,7 +56,6 @@ define(["N/record", "N/search"], function (record, search) {
         return responseData;
     }
 
-
     function createTable(data, responseData) {
         try {
             const folioRecordId = responseData.data.folioRecordId;
@@ -75,6 +70,14 @@ define(["N/record", "N/search"], function (record, search) {
             // Save the new record
             const tableRecordId = newRecord.save();
             responseData.data.tableRecordId = tableRecordId;
+
+            record.submitFields({
+                type: "customrecord_s4_sns_folio",
+                id: folioRecordId,
+                values: {
+                    custrecord_s4_sns_folio_invoice: tableRecordId
+                }
+            });
         } catch (e) {
             responseData.code = 500;
             responseData.message = e.message;
@@ -84,7 +87,13 @@ define(["N/record", "N/search"], function (record, search) {
 
     function createDetail(data, responseData) {
         try {
-            const tableRecordId = responseData.data.tableRecordId;
+            let tableRecordId;
+            if (!responseData.data.tableRecordId) {
+                tableRecordId = data.maintable;
+            } else {
+                tableRecordId = responseData.data.tableRecordId;
+            }
+
             const newRecord = record.create({
                 type: 'customrecord_s4_sns_detail'
             });
@@ -113,8 +122,20 @@ define(["N/record", "N/search"], function (record, search) {
 
     function updateFields(data, responseData) {
         try {
-            const folioRecordId = responseData.data.folioRecordId;
-            const tableRecordId = responseData.data.tableRecordId;
+            let tableRecordId;
+            if (!responseData.data.tableRecordId) {
+                tableRecordId = data.maintable;
+            } else {
+                tableRecordId = responseData.data.tableRecordId;
+            }
+
+            let folioRecordId;
+            if (!responseData.data.folioRecordId) {
+                folioRecordId = data.maininvoice;
+            } else {
+                folioRecordId = responseData.data.folioRecordId;
+            }
+
             const currentDebt = record.load({
                 type: 'customrecord_s4_sns_folio',
                 id: folioRecordId
@@ -127,6 +148,7 @@ define(["N/record", "N/search"], function (record, search) {
                     custrecord_s4_sns_folio_cudebt: newDebt
                 }
             });
+
             record.submitFields({
                 type: "customrecord_s4_sns_conauto",
                 id: tableRecordId,
@@ -140,6 +162,7 @@ define(["N/record", "N/search"], function (record, search) {
         }
         return responseData;
     }
+
 
 
 
