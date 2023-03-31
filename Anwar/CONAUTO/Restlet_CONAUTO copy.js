@@ -34,11 +34,6 @@ define(["N/record", "N/search", 'N/format'], function (record, search, format) {
 
     function createFolio(data, responseData) {
         try {
-            const errorMessage = validateFolioData(data);
-            if (errorMessage) {
-                throw new Error(errorMessage);
-            }
-
             let date = new Date();
             let formattedDate = format.format({ value: date, type: format.Type.DATE });
             const newRecord = record.create({
@@ -75,11 +70,9 @@ define(["N/record", "N/search", 'N/format'], function (record, search, format) {
         } catch (e) {
             responseData.code = 500;
             responseData.message = e.message;
-            throw e;
         }
         return responseData;
     }
-
 
     function createTable(data, responseData) {
         try {
@@ -169,6 +162,7 @@ define(["N/record", "N/search", 'N/format'], function (record, search, format) {
                 type: 'customrecord_s4_sns_folio',
                 id: folioRecordId
             }).getValue('custrecord_s4_sns_folio_cudebt');
+
             let newDebt = currentDebt - data.quantity;
             record.submitFields({
                 type: "customrecord_s4_sns_folio",
@@ -192,26 +186,6 @@ define(["N/record", "N/search", 'N/format'], function (record, search, format) {
         return responseData;
     }
 
-    function validateFolioData(data) {
-        if (!data.debt || !data.customer || !data.distributor || !data.item) {
-            return "Falta uno o más campos obligatorios";
-        }
-        if (!Number.isInteger(data.debt) || !Number.isInteger(data.customer) || !Number.isInteger(data.distributor) || !Number.isInteger(data.item)) {
-            return "Los campos debt, customer, distributor, e item deben ser números enteros.";
-        }
-        try {
-            const customerRecord = record.load({
-                type: record.Type.CUSTOMER,
-                id: data.customer
-            });
-        } catch (error) {
-            if (error.code === "INVALID_FLD_VALUE" || error.code === "RCRD_DSNT_EXIST") {
-                return "El ID del cliente proporcionado no es válido";
-            }
-            return error.message;
-        }
-
-    }
     return {
         post: post
     };
