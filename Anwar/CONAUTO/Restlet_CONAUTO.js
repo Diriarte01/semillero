@@ -3,7 +3,7 @@
  *@NScriptType Restlet
  */
 
-define(["N/record", "N/search"], function (record, search) {
+define(["N/record", "N/search", 'N/format'], function (record, search, format) {
     const responseData = {};
     responseData.code = 200;
     responseData.message = "Registro exitoso";
@@ -34,6 +34,8 @@ define(["N/record", "N/search"], function (record, search) {
 
     function createFolio(data, responseData) {
         try {
+            let date = new Date();
+            let formattedDate = format.format({ value: date, type: format.Type.DATE });
             const newRecord = record.create({
                 type: 'customrecord_s4_sns_folio'
             });
@@ -45,6 +47,22 @@ define(["N/record", "N/search"], function (record, search) {
             newRecord.setValue({
                 fieldId: 'custrecord_s4_sns_folio_cudebt',
                 value: data.debt.toString()
+            });
+            newRecord.setValue({
+                fieldId: 'custrecord_s4_sns_folio_customer',
+                value: data.customer.toString()
+            });
+            newRecord.setValue({
+                fieldId: 'custrecord_s4_sns_folio_distributor',
+                value: data.distributor.toString()
+            });
+            newRecord.setValue({
+                fieldId: 'custrecord_s4_sns_folio_item',
+                value: data.item.toString()
+            });
+            newRecord.setValue({
+                fieldId: 'custrecord_s4_sns_folio_contract_date',
+                value: formattedDate
             });
             // Save the new record
             const folioRecordId = newRecord.save();
@@ -66,6 +84,10 @@ define(["N/record", "N/search"], function (record, search) {
             newRecord.setValue({
                 fieldId: 'custrecord_s4_sns_ca_folio',
                 value: folioRecordId
+            });
+            newRecord.setValue({
+                fieldId: 'custrecord_s4_sns_ca_customer',
+                value: data.customer.toString()
             });
             // Save the new record
             const tableRecordId = newRecord.save();
@@ -162,9 +184,6 @@ define(["N/record", "N/search"], function (record, search) {
         }
         return responseData;
     }
-
-
-
 
     return {
         post: post
