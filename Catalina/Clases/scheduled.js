@@ -23,6 +23,24 @@ define(["N/search", "N/email"], function (search, email) {
                 filters: filters,
                 columns: columns
             });
+            // {
+            //     internalId: "61",
+            //     analysisOrd: "Prueba de Orde de analisis",
+            //     date: "2023-04-27",
+            //     requestor: "SERVIMETERS",
+            //     email: "servimeters@servimeters.com",
+            //     sender: "Prueba de Servicio",
+            //     city: "964",
+            //     laboratory: "13827",
+            //     executionAudit: "7",
+            //     processNum: "05234",
+            //     nSample: "2",
+            //     descriptionFeature: "es una prueba",
+            //     sample: "617",
+            //     rule: "icontec",
+            //     item: "",
+            //     product: "11"
+            //  }
             const searchResultCount = invoiceSearchObj.runPaged().count;
             log.audit("invoiceSearchObj result count", searchResultCount);
             invoiceSearchObj.run().each((result) => {

@@ -30,7 +30,7 @@ define(["N/ui/dialog", "N/url", "N/currentRecord"],
             } catch (error) {
                 console.log("Error en el save", error.message)
             }
-        }
+        } 
         // 12774144 radicado avvillas
         handlers.validateField = (context) => {
             try {
@@ -42,7 +42,7 @@ define(["N/ui/dialog", "N/url", "N/currentRecord"],
                     const containsList = /^(\d+,)*\d+$/.test(fieldValue)
                     const properties = current.getField(fields.id)
                     console.log("propiedades", properties.isDisabled)
-                    console.log("contiene un numero?", containsList, "Esta habilitado el campo id?", properties.isDisabled == false)
+                    
                     if (containsList == false && properties.isDisabled == false) {
                         dialog.alert({
                             title: "Advertencia!",

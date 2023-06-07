@@ -71,7 +71,7 @@ define(["N/runtime", "N/record", "N/search", "N/file"],
                 const idSave = recordObj.save()
                 log.debug("Creado con exito", { idSaved: idSave, idCreated: obj.id })
             } else {
-                log.debug("Este registro asi ya existe.", [obj.residents[0], typeof obj.residents[0], obj.url])
+                log.debug("Este registro asi ya existe.", [obj.id, obj.url])
             }
         }
         const processCharacter = (recordObj, obj) => {
@@ -132,7 +132,7 @@ define(["N/runtime", "N/record", "N/search", "N/file"],
                 const idSave = recordObj.save()
                 log.debug("Creado con exito", { idSaved: idSave, idCreated: obj.id })
             } else {
-                log.debug("Este registro asi ya existe.", obj.id)
+                log.debug("Este registro asi ya existe.", [obj.id, obj.url])
             }
         }
         const processEpisode = (recordObj, obj) => {
@@ -183,15 +183,13 @@ define(["N/runtime", "N/record", "N/search", "N/file"],
                 const idSave = recordObj.save()
                 log.debug("Creado con exito", { idSaved: idSave, idCreated: obj.id })
             } else {
-                log.debug("Este registro asi ya existe.", obj.id)
+                log.debug("Este registro asi ya existe.", [obj.id, obj.url])
             }
         }
         handlers.map = (context) => {
             try {
                 const entity = script.getParameter({ name: "custscript_s4_sns_parameter_entity" })
                 const obj = JSON.parse(context.value)
-                log.debug("entity", entity)
-                log.debug("context", context.key)
                 const recordObj = record.create({ type: `customrecord_s4_sns_${entity}_rym` })
                 switch (entity) {
                     case "location":
@@ -211,7 +209,6 @@ define(["N/runtime", "N/record", "N/search", "N/file"],
         handlers.summarize = (context) => {
             try {
                 x = context
-                log.debug("context", x)
             } catch (error) {
                 log.error("Error Summarize", error.message)
             }

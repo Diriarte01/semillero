@@ -152,7 +152,6 @@ define(["N/ui/serverWidget", 'N/task', 'N/https', "N/error"],
                         const summary = task.checkStatus({
                             taskId: okTask
                         })
-                        log.debug("okTask", consume.code)
                         if (summary.status == "PENDING" || summary.status == "COMPLETE") {
                             consumeOk(entity, form);
                             switch (entity) {
@@ -241,7 +240,6 @@ define(["N/ui/serverWidget", 'N/task', 'N/https', "N/error"],
                 body = body.results
             }
             if (Array.isArray(body) && bool) {
-                log.debug("entra array")
                 c = 0
                 body.forEach(rs => {
                     let length = 1
@@ -362,7 +360,6 @@ define(["N/ui/serverWidget", 'N/task', 'N/https', "N/error"],
                 body = body.results
             }
             if (Array.isArray(body) && bool) {
-                log.debug("entra array")
                 c = 0
                 body.forEach(rs => {
                     let length = 1
@@ -382,7 +379,6 @@ define(["N/ui/serverWidget", 'N/task', 'N/https', "N/error"],
                 let length = 1
                 c = 0
                 Object.entries(body).forEach(([key, value]) => {
-
                     sublistCharacter.setSublistValue({
                         id: characterCreator[length],
                         line: c,
@@ -457,7 +453,6 @@ define(["N/ui/serverWidget", 'N/task', 'N/https', "N/error"],
                 body = body.results
             }
             if (Array.isArray(body) && bool) {
-                log.debug("entra array")
                 c = 0
                 body.forEach(rs => {
                     let length = 1
